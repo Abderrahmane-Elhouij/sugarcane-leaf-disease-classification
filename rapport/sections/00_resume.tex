@@ -1,1 +1,22 @@
-\section{Brouillon}
+\section*{Résumé}
+\addcontentsline{toc}{section}{Résumé}
+
+Les maladies foliaires de la canne à sucre réduisent fortement les rendements, et leur diagnostic repose encore largement sur l'inspection visuelle. Ce projet évalue l'apprentissage par transfert pour reconnaître automatiquement, à partir de photos prises au champ, quatre maladies (mosaïque, pourriture rouge, rouille et maladie de la feuille jaune) et les feuilles saines. Nous utilisons le jeu public de Daphal et Koli (2\,521 images, cinq classes), dont l'audit a révélé 210 doublons exacts et 24 quasi-doublons, supprimés avant tout découpage. Quatre architectures pré-entraînées sur ImageNet (EfficientNetV2-S, MobileNetV4-Conv-M, ConvNeXtV2-T et SE-ResNet-50) sont comparées selon trois stratégies, l'extraction de caractéristiques, le fine-tuning partiel et le fine-tuning complet, ainsi qu'à un CNN entraîné from scratch, dans des conditions identiques, avec un ensemble de test isolé et une validation croisée stratifiée à cinq plis. Nous étudions aussi la fusion des embeddings des quatre réseaux, sur les 15 combinaisons possibles, et un vote souple. Le fine-tuning complet l'emporte pour toutes les architectures : ConvNeXtV2-T atteint $98{,}9 \pm 0{,}6$\,\% d'accuracy (F1 macro de 98,9\,\%), contre 94,3\,\% pour le CNN from scratch et 83,9 à 90,8\,\% en extraction de caractéristiques. La fusion des modèles fine-tunés porte l'accuracy à 99,4\,\%, un gain modeste mais significatif. ConvNeXtV2-T est aussi le modèle unique le plus robuste aux dégradations d'image, et MobileNetV4-M offre le meilleur compromis pour un téléphone (97,9\,\% avec 8,4 millions de paramètres). Avec un quart seulement des images d'apprentissage, ConvNeXtV2-T (96,7\,\%) fait déjà mieux que le CNN from scratch entraîné sur la totalité. Les cartes Grad-CAM montrent enfin qu'après fine-tuning, les modèles s'appuient sur les lésions plutôt que sur l'arrière-plan.
+
+\medskip
+\noindent\textbf{Mots-clés :} canne à sucre ; maladies foliaires ; apprentissage par transfert ; fine-tuning ; fusion de caractéristiques ; Grad-CAM.
+
+\medskip
+\noindent\textbf{Code source du projet :} \depot
+
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+\begin{otherlanguage}{english}
+Leaf diseases cause major yield losses in sugarcane, and their diagnosis still relies mostly on visual inspection. This project evaluates transfer learning for recognising four diseases (mosaic, red rot, rust and yellow leaf disease) and healthy leaves from field photographs. We use the public dataset of Daphal and Koli (2,521 images, five classes); an audit revealed 210 exact duplicates and 24 near-duplicates, which were removed before any split. Four ImageNet-pretrained architectures (EfficientNetV2-S, MobileNetV4-Conv-M, ConvNeXtV2-T and SE-ResNet-50) are compared under three strategies, feature extraction, partial fine-tuning and full fine-tuning, and against a CNN trained from scratch, under identical conditions, with a held-out test set and stratified five-fold cross-validation. We also study the fusion of the four networks' embeddings over all 15 combinations, as well as soft voting. Full fine-tuning is best for every architecture: ConvNeXtV2-T reaches $98.9 \pm 0.6$\% accuracy (macro F1 of 98.9\%), compared with 94.3\% for the scratch CNN and 83.9 to 90.8\% with feature extraction. Fusing the fine-tuned models raises accuracy to 99.4\%, a small but significant gain. ConvNeXtV2-T is also the most robust single model under image degradations, while MobileNetV4-M offers the best trade-off for smartphones (97.9\% with 8.4 million parameters). With only a quarter of the training images, ConvNeXtV2-T (96.7\%) already outperforms the scratch CNN trained on all of them. Finally, Grad-CAM maps show that, after fine-tuning, the models rely on the lesions rather than on the background.
+
+\medskip
+\noindent\textbf{Keywords:} sugarcane; leaf disease; transfer learning; fine-tuning; feature fusion; Grad-CAM.
+\end{otherlanguage}
+
+\clearpage

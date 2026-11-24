@@ -18,3 +18,38 @@ L^c_{\text{Grad-CAM}} = \mathrm{ReLU}\left( \sum_{k} \alpha_k^c\, A^k \right).
 La ReLU élimine les régions qui font baisser le score de la classe, qui relèvent plutôt des autres classes. La carte obtenue a la résolution de la dernière couche, ici $7\times7$ pour les cinq modèles ; elle est agrandie à $224\times224$ par interpolation bilinéaire, normalisée entre 0 et 1, puis superposée à l'image. Nous calculons la carte pour la classe prédite, avec les modèles du premier pli.
 
 Cette résolution de $7\times7$ est la principale limite de la méthode : chaque cellule couvre environ $32\times32$ pixels de l'image d'entrée, si bien que Grad-CAM localise des \emph{régions} et non des lésions individuelles. Elle suffit néanmoins pour savoir si le modèle regarde la feuille ou l'arrière-plan, et quelle partie de la feuille.
+
+\subsection{Zones malades et symptômes détectés}
+
+La figure~\ref{fig:gradcam-models} applique Grad-CAM aux cinq modèles sur une image de test par classe, tirée au hasard parmi celles que les quatre réseaux fine-tunés classent correctement.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{gradcam_models.png}
+\caption{Cartes Grad-CAM des modèles en fine-tuning complet et du CNN from scratch, pour une image de test par classe. Sous chaque carte : classe prédite et probabilité associée.}
+\label{fig:gradcam-models}
+\end{figure}
+
+Sur la feuille atteinte de pourriture rouge, tous les modèles regardent la lésion rouge de la nervure centrale, et ConvNeXtV2 la suit sur presque toute sa longueur. Sur la feuille jaune, ConvNeXtV2 et le CNN from scratch s'alignent eux aussi sur la nervure centrale, là où le jaunissement apparaît en premier. Pour la rouille, l'attention se porte sur la partie du limbe couverte de pustules. Pour la mosaïque, les zones activées sont plus diffuses et réparties le long du limbe, ce qui correspond à un symptôme lui-même diffus ; c'est aussi la classe pour laquelle les modèles sont le moins sûrs d'eux (de 46 à 91\,\% de probabilité). Sur la feuille saine enfin, les cartes suivent la nervure centrale et le limbe, sans zone privilégiée.
+
+Toutes les cartes ne sont pas aussi nettes. Celles de MobileNetV4 sont souvent ponctuelles et, sur les exemples Healthy et Rust, tombent en partie hors de la feuille ; le CNN from scratch, pour la rouille, regarde surtout la végétation de l'arrière-plan. Ces modèles donnent la bonne réponse, mais pas toujours pour les bonnes raisons, ce qui rejoint leur moindre robustesse aux dégradations (section~\ref{sec:robustesse}). À l'inverse, ConvNeXtV2 produit les cartes les plus cohérentes avec les symptômes, et c'est aussi le plus robuste des modèles uniques.
+
+\paragraph{Effet du fine-tuning sur l'attention.} La figure~\ref{fig:gradcam-strategies} compare les trois stratégies de transfert pour ConvNeXtV2, sur les mêmes images. En extraction de caractéristiques, le réseau ne peut pas apprendre à regarder ailleurs que là où ses filtres ImageNet réagissent. Sur l'exemple Mosaic, la carte se concentre sur la végétation à gauche de la feuille et la prédiction est fausse (Rust, 34\,\%) ; sur l'exemple Yellow, l'attention se disperse en plusieurs taches et le modèle répond Mosaic. Après fine-tuning partiel puis complet, l'attention se déplace sur la feuille et les deux images sont correctement classées, avec 91 et 92\,\% de confiance en fine-tuning complet. Pour la pourriture rouge, la lésion est déjà repérée par le réseau gelé, et le fine-tuning complet étend simplement la zone activée à toute sa longueur. Ces cartes donnent une image concrète du gain de 10 points mesuré entre extraction de caractéristiques et fine-tuning complet : le réseau apprend où regarder.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{gradcam_strategies.png}
+\caption{Cartes Grad-CAM de ConvNeXtV2-T selon la stratégie de transfert, sur les images de la figure~\ref{fig:gradcam-models}. Les prédictions fausses sont indiquées en rouge.}
+\label{fig:gradcam-strategies}
+\end{figure}
+
+\paragraph{Analyse des erreurs.} Le modèle ConvNeXtV2 du premier pli ne commet que cinq erreurs sur les 344 images de test ; la figure~\ref{fig:gradcam-errors} les montre toutes, avec la réponse de deux autres réseaux. Plusieurs de ces erreurs sont partagées : la feuille de mosaïque de la troisième ligne est classée comme rouillée par les trois modèles, ce qui laisse penser à une image ambiguë, voire mal étiquetée. La dernière erreur est particulièrement instructive. La feuille, étiquetée Yellow, présente bien un jaunissement, mais aussi une lésion rouge sur la nervure centrale, exactement là où se concentre l'attention de ConvNeXtV2 et d'EfficientNetV2, qui répondent RedRot. Il s'agit vraisemblablement d'une feuille atteinte des deux maladies, un cas qu'un classifieur à étiquette unique ne peut pas représenter. Les deux erreurs les plus franches (Healthy prédite Yellow à 86\,\% et Healthy prédite Mosaic à 81\,\%) portent sur des feuilles saines qui présentent des plages jaunâtres ou des stries claires, que le modèle prend pour des symptômes.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{gradcam_errors.png}
+\caption{Les cinq erreurs de ConvNeXtV2-T (premier pli) sur l'ensemble de test, avec les cartes Grad-CAM et les prédictions de deux autres réseaux. En rouge : prédiction fausse.}
+\label{fig:gradcam-errors}
+\end{figure}
+
+Ces erreurs ont en commun d'être, le plus souvent, prises avec une confiance plus faible que les bonnes réponses. Sur l'ensemble des prédictions de test des cinq plis, la probabilité médiane de la classe prédite est de 0,92 pour les réponses correctes de ConvNeXtV2 et de 0,67 pour ses erreurs. Un seuil de confiance de 0,7 signalerait 58\,\% de ses erreurs en ne marquant que 0,8\,\% des réponses correctes ; pour les trois autres réseaux, ce même seuil intercepte de 83 à 100\,\% des erreurs, pour 5 à 8\,\% des bonnes réponses. Dans une application réelle, ce seuil permettrait de renvoyer les cas douteux vers un technicien plutôt que d'afficher un diagnostic erroné.
