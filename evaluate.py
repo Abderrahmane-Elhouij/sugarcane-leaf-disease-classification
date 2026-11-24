@@ -115,6 +115,10 @@ def trainable_text(trainable, total):
     return f"{count} ({percent_text}\\,\\%)"
 
 
+def same_display(a, b, scale=100, digits=1):
+    return round(scale * a, digits) == round(scale * b, digits)
+
+
 def bold_if(text, condition):
     return f"\\textbf{{{text}}}" if condition else text
 
@@ -154,7 +158,8 @@ def table_main(summary):
         for metric in METRICS:
             mean, std = row[f"test_{metric}_mean"], row[f"test_{metric}_std"]
             text = plain(mean, std) if metric == "auc" else percent(mean, std)
-            cells.append(bold_if(text, np.isclose(mean, best[metric])))
+            display = (1, 4) if metric == "auc" else (100, 1)
+            cells.append(bold_if(text, same_display(mean, best[metric], *display)))
         params = row["total_params_mean"]
         if model == "fusion_finetuned":
             params = sum(row_of(summary, name, "full_finetuning")["total_params_mean"] for name in BACKBONES)
@@ -184,7 +189,7 @@ def table_strategies(summary):
                 trainable_text(row["trainable_params_mean"], row["total_params_mean"]),
                 percent(row["val_accuracy_mean"], row["val_accuracy_std"]),
                 bold_if(percent(row["test_accuracy_mean"], row["test_accuracy_std"]),
-                        np.isclose(row["test_accuracy_mean"], best_acc)),
+                        same_display(row["test_accuracy_mean"], best_acc)),
                 percent(row["test_f1_mean"], row["test_f1_std"]),
                 plain(row["test_auc_mean"], row["test_auc_std"]),
                 minutes(row["total_seconds_mean"]),
@@ -224,7 +229,7 @@ def table_per_class(runs, summary):
             cells = [class_name]
             for value in values:
                 text = fr(100 * value, digits) if metric != "auc" else fr(value, digits)
-                cells.append(bold_if(text, np.isclose(value, best)))
+                cells.append(bold_if(text, same_display(value, best, 1 if metric == "auc" else 100, digits)))
             lines.append(" & ".join(cells) + " \\\\")
         write_table(name, lines)
     pd.concat({MODEL_LABELS[m]: f for m, f in frames.items()}).to_csv(TABLES_DIR / "per_class_metrics.csv")
@@ -249,19 +254,21 @@ def bootstrap_interval(values, samples=10000, seed=0):
 def table_significance(runs, summary):
     entries = main_entries(summary)
     per_image = {(m, s): correctness(runs, m, s).mean(axis=0) for m, s in entries}
-    best = max(per_image, key=lambda key: per_image[key].mean())
+    singles = [key for key in per_image if key[0] in BACKBONES]
+    reference = max(singles, key=lambda key: per_image[key].mean())
     lines = []
     for model, strategy in entries:
         values = per_image[(model, strategy)]
         low, high = bootstrap_interval(values)
         cells = [MODEL_LABELS[model], fr(100 * values.mean()), f"[{fr(100 * low)} ; {fr(100 * high)}]"]
-        if (model, strategy) == best:
+        if (model, strategy) == reference:
             cells += ["référence", "--", "--"]
         else:
-            difference = per_image[best] - values
+            difference = values - per_image[reference]
             d_low, d_high = bootstrap_interval(difference)
+            significant = d_low > 0 or d_high < 0
             cells += [fr(100 * difference.mean()), f"[{fr(100 * d_low)} ; {fr(100 * d_high)}]",
-                      "oui" if d_low > 0 else "non"]
+                      "oui" if significant else "non"]
         lines.append(" & ".join(cells) + " \\\\")
     write_table("results_significance", lines)
 
@@ -293,7 +300,7 @@ def table_fusion(summary):
                 cells += ["--", "--"]
                 continue
             cells.append(bold_if(percent(row["test_accuracy_mean"], row["test_accuracy_std"]),
-                                 np.isclose(row["test_accuracy_mean"], best[source])))
+                                 same_display(row["test_accuracy_mean"], best[source])))
             cells.append(percent(row["test_f1_mean"], row["test_f1_std"]))
         lines.append(" & ".join(cells) + " \\\\")
     late = row_of(summary, "late_fusion", ALL_MEMBERS)
@@ -445,13 +452,16 @@ def plot_strategy_comparison(summary):
 
 
 def plot_fusion_gain(summary):
-    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.7), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.8))
     for ax, source, title in zip(axes, ("fusion_imagenet", "fusion_finetuned"),
                                  ("Embeddings ImageNet (backbones gelés)", "Embeddings après fine-tuning complet")):
         rows = summary[summary["model"] == source].copy()
         if rows.empty:
             continue
         rows["size"] = rows["strategy"].str.count(r"\+") + 1
+        values = 100 * rows["test_accuracy_mean"]
+        span = values.max() - values.min()
+        ax.set_ylim(values.min() - 0.15 * span, values.max() + 0.25 * span)
         best_points = []
         for size, group in rows.groupby("size"):
             jitter = np.linspace(-0.12, 0.12, len(group)) if len(group) > 1 else [0.0]
@@ -467,9 +477,9 @@ def plot_fusion_gain(summary):
         ax.set_title(title, fontsize=8.5)
         ax.set_xticks([1, 2, 3, 4])
         ax.set_xlabel("Nombre de backbones fusionnés")
-        ax.set_xlim(0.6, 4.4)
-    axes[0].set_ylabel("Accuracy sur le test (%)")
-    fig.tight_layout(w_pad=1.0)
+        ax.set_xlim(0.6, 4.5)
+        ax.set_ylabel("Accuracy sur le test (%)")
+    fig.tight_layout(w_pad=1.5)
     save_figure(fig, "fusion_gain")
 
 
@@ -480,9 +490,14 @@ def plot_efficiency(summary):
     efficiency = pd.read_csv(path).set_index("model")
     entries = [(name, "full_finetuning") for name in BACKBONES] + [(SCRATCH_MODEL, "from_scratch"),
                                                                     ("fusion_finetuned", ALL_MEMBERS)]
-    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.8), sharey=True)
+    axis_ticks = {"params_m": [1, 2, 5, 10, 20, 50, 100], "cpu_latency_ms": [10, 20, 50, 100, 200, 300]}
+    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.9), sharey=True)
     for ax, column, label in zip(axes, ("params_m", "cpu_latency_ms"),
                                  ("Nombre de paramètres (millions)", "Latence CPU, batch de 1 (ms)")):
+        label_offsets = {"fusion_finetuned": ((-8, -3), "right")}
+        close_pair = sorted(("efficientnetv2_s", "seresnet50"), key=lambda name: efficiency.loc[name, column])
+        label_offsets[close_pair[0]] = ((-7, 5), "right")
+        label_offsets[close_pair[1]] = ((7, -10), "left")
         for model, strategy in entries:
             row = row_of(summary, model, strategy)
             if row is None or model not in efficiency.index:
@@ -491,9 +506,14 @@ def plot_efficiency(summary):
             y = 100 * row["test_accuracy_mean"]
             ax.scatter(x, y, s=46, color=MODEL_COLORS[model], marker=MODEL_MARKERS[model], edgecolor="white",
                        linewidth=0.8, zorder=3)
-            ax.annotate(MODEL_LABELS[model], (x, y), xytext=(6, -3), textcoords="offset points", fontsize=7,
-                        color=INK_SECONDARY)
+            offset, align = label_offsets.get(model, ((7, -3), "left"))
+            ax.annotate(MODEL_LABELS[model], (x, y), xytext=offset, textcoords="offset points", fontsize=7,
+                        color=INK_SECONDARY, ha=align)
         ax.set_xscale("log")
+        ticks = axis_ticks[column]
+        ax.set_xticks(ticks, [str(t) for t in ticks])
+        ax.minorticks_off()
+        ax.set_xlim(ticks[0] * 0.8, ticks[-1] * 1.25)
         ax.set_xlabel(label)
     axes[0].set_ylabel("Accuracy sur le test (%)")
     fig.tight_layout(w_pad=1.2)
@@ -561,7 +581,7 @@ def plot_robustness():
     for ax, corruption in zip(axes, corruptions):
         subset = frame[frame["corruption"] == corruption]
         values = sorted(subset["value"].unique(), reverse=corruption in ("darkening", "jpeg"))
-        ticks = ["0"] + [f"{v:g}" for v in values]
+        ticks = ["0"] + [f"{v:g}".replace(".", ",") for v in values]
         for model, strategy in robustness_entries():
             base = clean[(clean["model"] == model) & (clean["strategy"] == strategy)]["accuracy"].mean()
             levels = [subset[(subset["model"] == model) & (subset["strategy"] == strategy) & (subset["level"] == level)]
@@ -600,8 +620,8 @@ def table_robustness():
     for model, (clean, per_corruption, mean_corrupted) in scores.items():
         drop = clean - mean_corrupted
         cells = [MODEL_LABELS[model], fr(100 * clean)] + [fr(100 * v) for v in per_corruption]
-        cells.append(bold_if(fr(100 * mean_corrupted), np.isclose(mean_corrupted, best_mean)))
-        cells.append(bold_if(fr(100 * drop), np.isclose(drop, best_drop)))
+        cells.append(bold_if(fr(100 * mean_corrupted), same_display(mean_corrupted, best_mean)))
+        cells.append(bold_if(fr(100 * drop), same_display(drop, best_drop)))
         lines.append(" & ".join(cells) + " \\\\")
     write_table("results_robustness", lines)
 
