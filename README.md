@@ -23,7 +23,7 @@ transfert et deux formes de fusion :
 | MobileNetV4 | `mobilenetv4_conv_medium.e500_r224_in1k` | 8,4 M | 1,65 |
 | ConvNeXtV2 | `convnextv2_tiny.fcmae_ft_in1k` | 27,9 M | 8,91 |
 | SENet | `seresnet50.ra2_in1k` | 26,1 M | 8,18 |
-| CNN from scratch | 9 couches convolutives (`src/models.py`) | 1,2 M | 1,53 |
+| CNN from scratch | 9 couches convolutives (`src/models.py`) | 1,2 M | 1,52 |
 
 - **Extraction de caractéristiques (FE)** : réseau gelé, seule la tête de classification est apprise.
 - **Fine-tuning partiel (PFT)** : le dernier étage du réseau (cartes 7×7) est ré-entraîné, le reste est gelé.
@@ -58,7 +58,53 @@ Chaque modèle est entraîné 5 fois et évalué sur le même ensemble de test ;
 
 ## Résultats principaux
 
-Les expériences sont en cours ; cette section sera complétée avec les résultats de la validation croisée.
+Accuracy sur l'ensemble de test (344 images), moyenne ± écart-type sur les 5 plis :
+
+| Modèle | Extraction (FE) | Fine-tuning partiel | Fine-tuning complet |
+|---|---|---|---|
+| EfficientNetV2-S | 90,5 ± 0,9 % | 97,2 ± 0,7 % | 98,3 ± 0,5 % |
+| MobileNetV4-M | 83,9 ± 0,7 % | 96,4 ± 0,7 % | 97,9 ± 0,4 % |
+| ConvNeXtV2-T | 88,6 ± 0,9 % | 95,5 ± 0,7 % | **98,9 ± 0,6 %** |
+| SE-ResNet-50 | 90,8 ± 0,8 % | 96,2 ± 0,9 % | 98,4 ± 0,8 % |
+| CNN from scratch | | | 94,3 ± 2,1 % |
+
+| Fusion | Embeddings ImageNet (gelés) | Embeddings fine-tunés |
+|---|---|---|
+| Meilleur réseau seul | 91,1 ± 1,0 % | 99,0 ± 0,6 % |
+| Concaténation des 4 réseaux | 92,7 ± 0,5 % | 99,3 ± 0,6 % |
+| Vote souple des 4 modèles fine-tunés | | **99,4 ± 0,5 %** |
+
+En résumé :
+
+- le fine-tuning complet l'emporte pour les quatre architectures, avec un gain de 7,6 à 14 points sur
+  l'extraction de caractéristiques ; ConvNeXtV2-T est le meilleur modèle unique (F1 macro 98,9 %, AUC 0,9998) ;
+- un petit CNN entraîné from scratch (94,3 %) dépasse l'extraction de caractéristiques, mais fait cinq fois plus
+  d'erreurs que ConvNeXtV2-T fine-tuné ;
+- la fusion des quatre réseaux fine-tunés réduit encore le taux d'erreur de moitié (99,3 à 99,4 %), un gain
+  significatif d'après un bootstrap sur les images de test, mais pour trois fois plus de calcul ;
+- MobileNetV4-M offre le meilleur compromis pour un téléphone : 97,9 % avec 8,4 M de paramètres, 1,65 GFLOPs
+  et 30 ms par image sur CPU (contre 97 ms pour ConvNeXtV2-T) ;
+- la classe Mosaic est la plus difficile pour tous les modèles ; les confusions restantes opposent surtout
+  Mosaic et Healthy, RedRot et Rust, Yellow et RedRot.
+
+Robustesse : sur des images de test dégradées (bruit, flou, assombrissement, compression JPEG, occultation),
+ConvNeXtV2-T reste le plus robuste des modèles uniques (86,4 % d'accuracy en moyenne, contre 71,7 % pour
+MobileNetV4-M). Après fine-tuning complet, MobileNetV4-M et SE-ResNet-50 s'effondrent face au bruit, alors que
+leur fine-tuning partiel résiste bien mieux.
+
+Besoin en données : avec seulement 25 % des images d'apprentissage (388 images), ConvNeXtV2-T fine-tuné
+atteint 96,7 %, mieux que le CNN from scratch entraîné sur toutes les images (94,3 %) ; avec 10 % des images
+(155), l'écart entre les deux atteint 20 points (91,5 % contre 71,5 %).
+
+Les figures (courbes d'apprentissage, matrices de confusion, courbes ROC, Grad-CAM, etc.) sont dans
+[`outputs/figures`](outputs/figures) et les tableaux dans [`outputs/tables`](outputs/tables).
+
+![Exemples d'images par classe](outputs/figures/dataset_samples.png)
+
+Cartes Grad-CAM des modèles fine-tunés (une image de test par classe) : après fine-tuning, l'attention se porte sur
+les lésions et la nervure centrale plutôt que sur l'arrière-plan.
+
+![Grad-CAM](outputs/figures/gradcam_models.png)
 
 ## Organisation du dépôt
 
