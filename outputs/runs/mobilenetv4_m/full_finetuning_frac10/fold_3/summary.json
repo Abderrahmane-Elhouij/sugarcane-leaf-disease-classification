@@ -1,0 +1,32 @@
+{
+  "model": "mobilenetv4_m",
+  "strategy": "full_finetuning_frac10",
+  "fold": 3,
+  "fraction": 0.1,
+  "train_images": 156,
+  "epochs": 30,
+  "best_epoch": 29,
+  "total_params": 8443477,
+  "trainable_params": 8443477,
+  "train_seconds": 11.011828200193122,
+  "total_seconds": 23.030811100034043,
+  "peak_memory_mb": 964.45751953125,
+  "batch_size": 32,
+  "lr_new_layers": 0.001,
+  "lr_pretrained": 0.0001,
+  "weight_decay": 0.05,
+  "val": {
+    "accuracy": 0.7731958762886598,
+    "precision": 0.7696522707912751,
+    "recall": 0.7694664004856635,
+    "f1": 0.7677197751132762,
+    "auc": 0.9479890238244021
+  },
+  "test": {
+    "accuracy": 0.7994186046511628,
+    "precision": 0.7972296545302712,
+    "recall": 0.7981315974644365,
+    "f1": 0.7962891988963418,
+    "auc": 0.9635128870769663
+  }
+}

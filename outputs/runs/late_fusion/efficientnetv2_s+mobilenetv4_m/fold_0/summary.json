@@ -1,0 +1,26 @@
+{
+  "model": "late_fusion",
+  "strategy": "efficientnetv2_s+mobilenetv4_m",
+  "members": [
+    "efficientnetv2_s",
+    "mobilenetv4_m"
+  ],
+  "fold": 0,
+  "total_params": 28629930,
+  "trainable_params": 0,
+  "members_seconds": 440.3586440999061,
+  "val": {
+    "accuracy": 0.9794344473007712,
+    "precision": 0.9798059747752903,
+    "recall": 0.9783154761904761,
+    "f1": 0.9789277276960423,
+    "auc": 0.9990726597259837
+  },
+  "test": {
+    "accuracy": 0.9854651162790697,
+    "precision": 0.9843163976136801,
+    "recall": 0.9853097419813507,
+    "f1": 0.9847693815627675,
+    "auc": 0.999943429566264
+  }
+}

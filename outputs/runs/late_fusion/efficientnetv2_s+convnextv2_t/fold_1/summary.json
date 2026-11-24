@@ -1,0 +1,26 @@
+{
+  "model": "late_fusion",
+  "strategy": "efficientnetv2_s+convnextv2_t",
+  "members": [
+    "efficientnetv2_s",
+    "convnextv2_t"
+  ],
+  "fold": 1,
+  "total_params": 48058330,
+  "trainable_params": 0,
+  "members_seconds": 606.7981316999067,
+  "val": {
+    "accuracy": 0.9897172236503856,
+    "precision": 0.9898747544995009,
+    "recall": 0.9887577519379847,
+    "f1": 0.9892816686268382,
+    "auc": 0.9997922507208848
+  },
+  "test": {
+    "accuracy": 0.997093023255814,
+    "precision": 0.9972222222222221,
+    "recall": 0.9964912280701753,
+    "f1": 0.9968314870969739,
+    "auc": 1.0
+  }
+}

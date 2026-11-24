@@ -1,0 +1,32 @@
+{
+  "model": "scratch_cnn",
+  "strategy": "from_scratch_frac50",
+  "fold": 1,
+  "fraction": 0.5,
+  "train_images": 778,
+  "epochs": 30,
+  "best_epoch": 26,
+  "total_params": 1184293,
+  "trainable_params": 1184293,
+  "train_seconds": 17.651878700009547,
+  "total_seconds": 20.45508810004685,
+  "peak_memory_mb": 423.23974609375,
+  "batch_size": 32,
+  "lr_new_layers": 0.001,
+  "lr_pretrained": 0.0001,
+  "weight_decay": 0.05,
+  "val": {
+    "accuracy": 0.9203084832904884,
+    "precision": 0.915859537698618,
+    "recall": 0.9145333610188262,
+    "f1": 0.9150027513216259,
+    "auc": 0.9908679925828535
+  },
+  "test": {
+    "accuracy": 0.8837209302325582,
+    "precision": 0.88331766308717,
+    "recall": 0.8829844839110962,
+    "f1": 0.8819888311350825,
+    "auc": 0.987611069090244
+  }
+}

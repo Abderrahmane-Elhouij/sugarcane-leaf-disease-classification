@@ -1,0 +1,6 @@
+path,true,predicted,confidence
+Healthy/healthy_232.png,Healthy,Mosaic,0.5707477927207947
+Healthy/healthy_236.png,Healthy,Yellow,0.861137330532074
+Healthy/healthy_335.png,Healthy,Mosaic,0.8128548860549927
+Mosaic/mosaic_13.png,Mosaic,Rust,0.7544442415237427
+Yellow/yellow_421.png,Yellow,RedRot,0.4664857089519501

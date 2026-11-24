@@ -1,0 +1,30 @@
+{
+  "model": "seresnet50",
+  "strategy": "feature_extraction",
+  "fold": 1,
+  "epochs": 30,
+  "best_epoch": 22,
+  "total_params": 26053365,
+  "trainable_params": 14341,
+  "train_seconds": 53.269188700011,
+  "total_seconds": 66.85987080004998,
+  "peak_memory_mb": 376.16064453125,
+  "batch_size": 32,
+  "lr_new_layers": 0.001,
+  "lr_pretrained": 0.0001,
+  "weight_decay": 0.05,
+  "val": {
+    "accuracy": 0.9177377892030848,
+    "precision": 0.9179741592386683,
+    "recall": 0.916514950166113,
+    "f1": 0.9170825972117582,
+    "auc": 0.9904972122784844
+  },
+  "test": {
+    "accuracy": 0.9127906976744186,
+    "precision": 0.9175486544950276,
+    "recall": 0.9100393472520973,
+    "f1": 0.9118708997471561,
+    "auc": 0.989488105315219
+  }
+}

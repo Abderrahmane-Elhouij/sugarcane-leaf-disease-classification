@@ -1,0 +1,26 @@
+{
+  "model": "late_fusion",
+  "strategy": "convnextv2_t+seresnet50",
+  "members": [
+    "convnextv2_t",
+    "seresnet50"
+  ],
+  "fold": 4,
+  "total_params": 53925242,
+  "trainable_params": 0,
+  "members_seconds": 473.5095432999078,
+  "val": {
+    "accuracy": 0.9896907216494846,
+    "precision": 0.990526131269877,
+    "recall": 0.9891111111111112,
+    "f1": 0.9897486960503026,
+    "auc": 0.9997490243777853
+  },
+  "test": {
+    "accuracy": 0.9912790697674418,
+    "precision": 0.990728375665532,
+    "recall": 0.9911569464201044,
+    "f1": 0.9909038197441324,
+    "auc": 0.9999548289326237
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "model": "fusion_finetuned",
+  "strategy": "efficientnetv2_s+seresnet50",
+  "members": [
+    "efficientnetv2_s",
+    "seresnet50"
+  ],
+  "fold": 2,
+  "epochs": 30,
+  "best_epoch": 12,
+  "embedding_dim": 3328,
+  "trainable_params": 23301,
+  "train_seconds": 6.368475398863666,
+  "total_seconds": 6.991923499968834,
+  "val": {
+    "accuracy": 0.9794344473007712,
+    "precision": 0.9817398119122258,
+    "recall": 0.9782861681709722,
+    "f1": 0.9797298111440611,
+    "auc": 0.9993463382095907
+  },
+  "test": {
+    "accuracy": 0.9883720930232558,
+    "precision": 0.9877684407096172,
+    "recall": 0.9876481744902798,
+    "f1": 0.9876215419323131,
+    "auc": 0.9997671035880803
+  }
+}

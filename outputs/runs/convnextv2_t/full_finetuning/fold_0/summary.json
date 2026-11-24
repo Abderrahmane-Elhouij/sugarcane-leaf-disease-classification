@@ -1,0 +1,30 @@
+{
+  "model": "convnextv2_t",
+  "strategy": "full_finetuning",
+  "fold": 0,
+  "epochs": 30,
+  "best_epoch": 20,
+  "total_params": 27871877,
+  "trainable_params": 27871877,
+  "train_seconds": 287.9239886001451,
+  "total_seconds": 307.7882988998899,
+  "peak_memory_mb": 3945.03369140625,
+  "batch_size": 32,
+  "lr_new_layers": 0.001,
+  "lr_pretrained": 0.0001,
+  "weight_decay": 0.05,
+  "val": {
+    "accuracy": 0.9820051413881749,
+    "precision": 0.9829204745871412,
+    "recall": 0.9816148947951273,
+    "f1": 0.9820859381200263,
+    "auc": 0.9993894821560867
+  },
+  "test": {
+    "accuracy": 0.9854651162790697,
+    "precision": 0.9848182683488911,
+    "recall": 0.9853378211421207,
+    "f1": 0.9849524102893797,
+    "auc": 0.9998587914890867
+  }
+}

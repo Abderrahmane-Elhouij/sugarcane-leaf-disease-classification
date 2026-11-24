@@ -1,0 +1,26 @@
+{
+  "model": "late_fusion",
+  "strategy": "efficientnetv2_s+seresnet50",
+  "members": [
+    "efficientnetv2_s",
+    "seresnet50"
+  ],
+  "fold": 4,
+  "total_params": 46239818,
+  "trainable_params": 0,
+  "members_seconds": 476.89598999999,
+  "val": {
+    "accuracy": 0.9768041237113402,
+    "precision": 0.9779487006740849,
+    "recall": 0.9761823551125877,
+    "f1": 0.9769255705127406,
+    "auc": 0.9995935191974787
+  },
+  "test": {
+    "accuracy": 0.9883720930232558,
+    "precision": 0.9888677782259873,
+    "recall": 0.9885253674727359,
+    "f1": 0.9886515150620001,
+    "auc": 0.999862967604831
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "model": "fusion_finetuned",
+  "strategy": "mobilenetv4_m",
+  "members": [
+    "mobilenetv4_m"
+  ],
+  "fold": 1,
+  "epochs": 30,
+  "best_epoch": 24,
+  "embedding_dim": 1280,
+  "trainable_params": 8965,
+  "train_seconds": 6.0982014001347125,
+  "total_seconds": 6.713483500061557,
+  "val": {
+    "accuracy": 0.9768637532133676,
+    "precision": 0.9771638915588664,
+    "recall": 0.9765095514950166,
+    "f1": 0.9767207554719597,
+    "auc": 0.9989923985098415
+  },
+  "test": {
+    "accuracy": 0.9767441860465116,
+    "precision": 0.9782896677143252,
+    "recall": 0.9764041553515238,
+    "f1": 0.9771043462432351,
+    "auc": 0.998678870075671
+  }
+}

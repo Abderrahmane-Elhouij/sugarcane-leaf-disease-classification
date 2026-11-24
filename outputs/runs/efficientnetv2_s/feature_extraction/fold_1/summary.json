@@ -1,0 +1,30 @@
+{
+  "model": "efficientnetv2_s",
+  "strategy": "feature_extraction",
+  "fold": 1,
+  "epochs": 30,
+  "best_epoch": 21,
+  "total_params": 20186453,
+  "trainable_params": 8965,
+  "train_seconds": 89.92138669989072,
+  "total_seconds": 111.8209997001104,
+  "peak_memory_mb": 298.583984375,
+  "batch_size": 32,
+  "lr_new_layers": 0.001,
+  "lr_pretrained": 0.0001,
+  "weight_decay": 0.05,
+  "val": {
+    "accuracy": 0.9280205655526992,
+    "precision": 0.933721097742837,
+    "recall": 0.9275393133997785,
+    "f1": 0.9291473822904269,
+    "auc": 0.9951788531250216
+  },
+  "test": {
+    "accuracy": 0.9011627906976745,
+    "precision": 0.9067988311608607,
+    "recall": 0.8987975440903536,
+    "f1": 0.9003268611933872,
+    "auc": 0.989160288947318
+  }
+}

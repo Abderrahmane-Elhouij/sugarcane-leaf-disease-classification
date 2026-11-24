@@ -1,0 +1,30 @@
+{
+  "model": "fusion_imagenet",
+  "strategy": "efficientnetv2_s+mobilenetv4_m+convnextv2_t",
+  "members": [
+    "efficientnetv2_s",
+    "mobilenetv4_m",
+    "convnextv2_t"
+  ],
+  "fold": 0,
+  "epochs": 30,
+  "best_epoch": 25,
+  "embedding_dim": 3328,
+  "trainable_params": 23301,
+  "train_seconds": 7.323336499743164,
+  "total_seconds": 8.156102500041015,
+  "val": {
+    "accuracy": 0.9280205655526992,
+    "precision": 0.927767416545108,
+    "recall": 0.925641749723145,
+    "f1": 0.9264932191055676,
+    "auc": 0.9944563321488328
+  },
+  "test": {
+    "accuracy": 0.9069767441860465,
+    "precision": 0.9061009524990187,
+    "recall": 0.9064530464826982,
+    "f1": 0.9060254594943092,
+    "auc": 0.9934967874808575
+  }
+}

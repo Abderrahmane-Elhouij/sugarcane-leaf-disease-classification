@@ -1,0 +1,29 @@
+{
+  "model": "fusion_finetuned",
+  "strategy": "convnextv2_t+seresnet50",
+  "members": [
+    "convnextv2_t",
+    "seresnet50"
+  ],
+  "fold": 0,
+  "epochs": 30,
+  "best_epoch": 2,
+  "embedding_dim": 2816,
+  "trainable_params": 19717,
+  "train_seconds": 5.526465899660252,
+  "total_seconds": 6.108808899996802,
+  "val": {
+    "accuracy": 0.987146529562982,
+    "precision": 0.9877222517573395,
+    "recall": 0.9863214285714286,
+    "f1": 0.9869011617378478,
+    "auc": 0.9990584232788965
+  },
+  "test": {
+    "accuracy": 0.9883720930232558,
+    "precision": 0.9879422084623324,
+    "recall": 0.9882258463059056,
+    "f1": 0.9879822253957139,
+    "auc": 0.9999755486276667
+  }
+}

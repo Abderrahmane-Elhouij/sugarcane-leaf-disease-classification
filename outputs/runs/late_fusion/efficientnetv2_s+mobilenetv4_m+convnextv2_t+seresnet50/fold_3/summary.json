@@ -1,0 +1,28 @@
+{
+  "model": "late_fusion",
+  "strategy": "efficientnetv2_s+mobilenetv4_m+convnextv2_t+seresnet50",
+  "members": [
+    "efficientnetv2_s",
+    "mobilenetv4_m",
+    "convnextv2_t",
+    "seresnet50"
+  ],
+  "fold": 3,
+  "total_params": 82555172,
+  "trainable_params": 0,
+  "members_seconds": 925.6973298001103,
+  "val": {
+    "accuracy": 0.9896907216494846,
+    "precision": 0.9905830217421409,
+    "recall": 0.9901884748295509,
+    "f1": 0.9903702329198861,
+    "auc": 0.9998591907984349
+  },
+  "test": {
+    "accuracy": 0.9854651162790697,
+    "precision": 0.9861450640862406,
+    "recall": 0.9849454717875771,
+    "f1": 0.9853836007482559,
+    "auc": 0.9998788641193986
+  }
+}
