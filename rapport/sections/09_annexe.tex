@@ -1,0 +1,45 @@
+\section{Organisation du code et reproduction des résultats}
+\label{sec:annexe}
+
+Le code source est disponible dans le dépôt \depot. Il est écrit en Python avec PyTorch et \texttt{timm}, et organisé en une série de scripts à exécuter dans l'ordre, qui s'appuient sur un petit paquet \texttt{src/} regroupant les éléments réutilisables.
+
+\begin{table}[htbp]
+\centering
+\caption{Organisation du dépôt.}
+\label{tab:repo}
+\begin{tabularx}{\textwidth}{>{\ttfamily}l X}
+\toprule
+\textrm{\textbf{Fichier}} & \textbf{Rôle} \\
+\midrule
+src/config.py & chemins, classes, hyperparamètres et choix des modèles, regroupés en un seul endroit \\
+src/data.py & lecture des images, découpage par pli, chargeur de lots et augmentation sur GPU \\
+src/models.py & réseaux pré-entraînés, CNN from scratch, tête commune, stratégies de transfert, tête de fusion \\
+src/engine.py & boucles d'entraînement et d'évaluation, ordonnancement du taux d'apprentissage \\
+src/metrics.py & métriques globales et par classe, matrice de confusion, courbes ROC \\
+src/gradcam.py & implémentation de Grad-CAM \\
+src/plots.py & style commun des figures \\
+\midrule
+prepare\_data.py & téléchargement, audit (doublons), découpage stratifié, mise en cache $256\times256$ \\
+explore\_data.py & figures et tableau de description du jeu de données \\
+train.py & entraînement des 4 architectures $\times$ 3 stratégies et du CNN from scratch, sur les 5 plis ; option \texttt{--fractions} pour l'étude du besoin en données \\
+train\_fusion.py & extraction des embeddings, têtes de fusion (15 combinaisons) et vote souple \\
+benchmark.py & coût de calcul (paramètres, GFLOPs, latences) et robustesse aux dégradations \\
+evaluate.py & agrégation des résultats, tableaux \LaTeX{} et figures du rapport \\
+explain.py & cartes Grad-CAM \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La reproduction complète tient en quelques commandes, après installation des dépendances listées dans \texttt{requirements.txt} (PyTorch avec prise en charge CUDA de préférence) :
+\begin{verbatim}
+python prepare_data.py --download
+python explore_data.py
+python train.py
+python train_fusion.py
+python benchmark.py
+python train.py --models convnextv2_t mobilenetv4_m scratch_cnn \
+                --strategies full_finetuning --fractions 0.1 0.25 0.5
+python evaluate.py
+python explain.py
+\end{verbatim}
+Sur notre machine, l'ensemble demande environ trois heures, dont l'essentiel pour \texttt{train.py}. Chaque entraînement terminé est enregistré (historique, prédictions, poids, résumé) et sauté si l'on relance le script, ce qui permet de reprendre un calcul interrompu. Les prédictions et les résumés de tous les entraînements sont versionnés dans le dépôt : \texttt{evaluate.py} peut donc régénérer les tableaux et la plupart des figures sans refaire les entraînements.

@@ -1,0 +1,20 @@
+\section{Interprétabilité du modèle}
+\label{sec:interpretabilite}
+
+Une accuracy élevée ne dit pas \emph{pourquoi} le modèle a raison. Sur des photographies prises au champ, un réseau peut très bien s'appuyer sur des indices sans rapport avec la maladie : la couleur du sol, la présence de feuilles sèches en arrière-plan, l'heure de la prise de vue, voire le téléphone utilisé. Un tel modèle obtiendrait de bons scores sur un test issu de la même campagne d'acquisition et échouerait ailleurs. Pour un outil destiné à des agriculteurs, il est donc important de vérifier que les décisions reposent bien sur les symptômes.
+
+\subsection{Principe de Grad-CAM}
+
+Grad-CAM \cite{selvaraju2017gradcam}, qui généralise la méthode CAM \cite{zhou2016learning}, produit une carte de chaleur indiquant les régions de l'image qui ont le plus contribué au score d'une classe. Soit $A^k \in \mathbb{R}^{H\times W}$ la $k$-ième carte de caractéristiques de la dernière couche convolutive et $y^c$ le score (avant softmax) de la classe $c$. On calcule d'abord l'importance de chaque carte en moyennant le gradient du score sur toutes les positions :
+\begin{equation}
+\alpha_k^c = \frac{1}{H\,W} \sum_{i=1}^{H}\sum_{j=1}^{W} \frac{\partial y^c}{\partial A^k_{ij}},
+\label{eq:gradcam-weights}
+\end{equation}
+puis on combine les cartes pondérées en ne gardant que les contributions positives :
+\begin{equation}
+L^c_{\text{Grad-CAM}} = \mathrm{ReLU}\left( \sum_{k} \alpha_k^c\, A^k \right).
+\label{eq:gradcam}
+\end{equation}
+La ReLU élimine les régions qui font baisser le score de la classe, qui relèvent plutôt des autres classes. La carte obtenue a la résolution de la dernière couche, ici $7\times7$ pour les cinq modèles ; elle est agrandie à $224\times224$ par interpolation bilinéaire, normalisée entre 0 et 1, puis superposée à l'image. Nous calculons la carte pour la classe prédite, avec les modèles du premier pli.
+
+Cette résolution de $7\times7$ est la principale limite de la méthode : chaque cellule couvre environ $32\times32$ pixels de l'image d'entrée, si bien que Grad-CAM localise des \emph{régions} et non des lésions individuelles. Elle suffit néanmoins pour savoir si le modèle regarde la feuille ou l'arrière-plan, et quelle partie de la feuille.

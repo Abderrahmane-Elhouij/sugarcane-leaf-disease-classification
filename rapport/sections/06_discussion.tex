@@ -1,0 +1,38 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Forces}
+
+\paragraph{Des performances élevées.} XX
+
+\paragraph{Un faible besoin en données.} XX
+
+\paragraph{La réutilisation des connaissances pré-entraînées.} XX
+
+\paragraph{Un protocole qui limite les biais.} L'audit du jeu de données, l'ensemble de test isolé et la validation croisée à cinq plis rendent nos chiffres plus fiables qu'un découpage aléatoire unique. Les mêmes hyperparamètres, les mêmes lots et les mêmes tirages d'augmentation pour tous les modèles font que les écarts observés tiennent bien aux architectures et aux stratégies. Enfin, la tête commune a évité un biais discret, mais réel, lié à l'initialisation des classifieurs de \texttt{timm}.
+
+\subsection{Limites}
+
+\paragraph{Un jeu de données acquis dans des conditions homogènes.} Toutes les images proviennent de quelques exploitations d'un même district indien, ont été prises en août et septembre, par temps clair, avec trois téléphones \cite{daphal2023enhancing}. La plupart sont des gros plans d'une seule feuille, cadrée par un opérateur. Les modèles n'ont donc vu ni d'autres variétés, ni d'autres saisons, ni des conditions de lumière difficiles, ni des feuilles photographiées de loin au milieu du couvert végétal.
+
+\paragraph{Une généralisation non vérifiée en conditions réelles.} Notre ensemble de test est tiré du même jeu de données que l'apprentissage. Il mesure la capacité à reconnaître de nouvelles photos prises dans les mêmes conditions, pas la capacité à fonctionner dans un autre contexte. L'expérience de Mohanty et al., dont le modèle passait de 99\,\% à environ 31\,\% sur des images d'une autre origine \cite{mohanty2016using}, montre que l'écart peut être considérable. Les tests de robustesse de la section~\ref{sec:robustesse} donnent une première indication, mais ils ne remplacent pas un vrai jeu de test externe, comme les 427 photos de terrain utilisées par Indra et al. \cite{indra2026sugarcane}.
+
+\paragraph{Un léger déséquilibre des classes.} Le nettoyage a surtout réduit la classe Mosaic, qui ne compte plus que 376 images contre 505 pour RedRot. Ce déséquilibre reste modéré et les métriques macro montrent qu'il n'a pas pénalisé la classe minoritaire de façon visible, mais il pourrait compter davantage avec un jeu plus déséquilibré.
+
+\paragraph{Une seule étiquette par image.} Chaque feuille est rangée dans une seule classe. Or une même feuille peut porter plusieurs maladies à la fois, ou une maladie à un stade très précoce difficile à distinguer d'une feuille saine. Les étiquettes du jeu n'ont pas été vérifiées par un second expert, et nous n'avons aucun moyen d'estimer leur taux d'erreur.
+
+\paragraph{Une incertitude statistique non négligeable.} Avec 344 images de test, une différence d'un point d'accuracy correspond à trois ou quatre images. XX
+
+\paragraph{Des choix méthodologiques discutables.} Le seuil de 0,90 utilisé pour les quasi-doublons a été fixé après inspection visuelle : des photographies d'une même feuille prises sous un angle un peu différent peuvent subsister dans des plis différents. Le redimensionnement sans conservation des proportions déforme les lésions. Enfin, un seul jeu d'hyperparamètres a été utilisé pour tous les modèles : c'est ce qui rend la comparaison équitable, mais certains modèles auraient sans doute gagné à un réglage spécifique, en particulier le CNN from scratch, pour qui 30 époques sont peu.
+
+\paragraph{Une interprétabilité limitée.} Les cartes Grad-CAM ont une résolution de $7\times7$ et ne localisent que des régions. Elles indiquent où le modèle regarde, pas ce qu'il y reconnaît.
+
+\subsection{Perspectives}
+
+\paragraph{Apprentissage multimodal.} Une photographie ne dit pas tout : la variété cultivée, l'âge de la culture, la météo des jours précédents ou l'historique de la parcelle orientent fortement le diagnostic d'un agronome. Un modèle multimodal pourrait combiner l'image avec ces données tabulaires, ou avec d'autres capteurs. L'imagerie hyperspectrale, en particulier, permet de détecter certaines maladies avant l'apparition des symptômes visibles \cite{rumpf2010early, mahlein2016plant}. La fusion de caractéristiques étudiée ici en est un premier pas : le même principe de concaténation d'embeddings normalisés s'applique à des sources de nature différente.
+
+\paragraph{Déploiement sur smartphone.} XX Il faudrait ensuite le convertir dans un format adapté au mobile (TensorFlow Lite, ONNX ou Core ML) et vérifier l'effet de la quantification, qui avait coûté plus de cinq points à Daphal et Koli \cite{daphal2024enhanced}. L'application pourrait fonctionner hors connexion, ce qui compte dans les zones rurales, et afficher la carte Grad-CAM pour que l'agriculteur voie sur quelle partie de la feuille repose le diagnostic.
+
+\paragraph{Détection en temps réel par drone.} Pour surveiller de grandes surfaces, il faudrait passer de la classification de gros plans à la détection des zones malades dans des images aériennes. Cela suppose des modèles de détection ou de segmentation (de type YOLO, déjà utilisés pour la canne à sucre \cite{kumpala2022sugarcane, malik2021disease}), entraînés sur des images prises à plusieurs mètres de hauteur, où chaque feuille n'occupe que quelques dizaines de pixels. Les embeddings appris ici pourraient servir d'initialisation pour la partie classification d'un tel système.
+
+\paragraph{Données et méthodes.} À plus court terme, plusieurs pistes permettraient de consolider nos conclusions : constituer un jeu de test externe, pris dans une autre région et avec d'autres téléphones ; fusionner les jeux publics existants, après dédoublonnage, comme l'ont fait Arman et al. \cite{arman2025sugarcaneshufflenet} ; pré-entraîner les réseaux de manière auto-supervisée sur des images agricoles non étiquetées ; distiller la connaissance du modèle de fusion dans MobileNetV4 pour cumuler précision et légèreté ; ajouter une classe \og autre \fg{} ou un seuil de confiance, pour que le modèle sache dire qu'il ne reconnaît pas une maladie absente de l'apprentissage.

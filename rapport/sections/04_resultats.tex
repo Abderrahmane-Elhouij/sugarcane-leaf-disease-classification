@@ -1,0 +1,29 @@
+\section{Résultats obtenus}
+\label{sec:resultats}
+
+\subsection{Caractéristiques de l'unité de calcul}
+\label{sec:materiel}
+
+Toutes les expériences ont été menées sur un ordinateur portable dont le tableau~\ref{tab:hardware} décrit la configuration. Les entraînements ont été lancés les uns après les autres, jamais en parallèle, pour que les temps mesurés restent comparables, et tous utilisent les hyperparamètres du tableau~\ref{tab:hyper}.
+
+\begin{table}[htbp]
+\centering
+\caption{Environnement matériel et logiciel.}
+\label{tab:hardware}
+\small
+\begin{tabularx}{0.92\textwidth}{l X}
+\toprule
+\textbf{Composant} & \textbf{Caractéristiques} \\
+\midrule
+Processeur & AMD Ryzen 9 8945HX (16 cœurs, 32 threads) \\
+Carte graphique & NVIDIA GeForce RTX 5070 Laptop GPU, 8~Go de mémoire (architecture Blackwell) \\
+Mémoire vive & 32~Go \\
+Système d'exploitation & Windows 11 Pro \\
+Langage & Python 3.12.13 \\
+Apprentissage profond & PyTorch 2.14.1 (CUDA 13.0, cuDNN 9.24), torchvision 0.29.1, timm 1.0.31 \\
+Analyse et figures & scikit-learn 1.9.1, NumPy 2.5.4, pandas 3.1.1, Matplotlib 3.11.2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+RESULTS_TEXT_PLACEHOLDER

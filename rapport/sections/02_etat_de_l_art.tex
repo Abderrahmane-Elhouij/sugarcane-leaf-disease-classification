@@ -1,0 +1,72 @@
+\section{État de l'art}
+\label{sec:etat-art}
+
+\subsection{Détection des maladies des plantes}
+
+\subsubsection{Méthodes classiques de traitement d'images}
+
+Les premiers systèmes de diagnostic automatique suivaient une chaîne de traitement à peu près fixe : amélioration de l'image, segmentation de la feuille puis des lésions, extraction de descripteurs et règle de décision. La segmentation reposait sur des seuillages dans différents espaces de couleur (RVB, HSV, L*a*b*) ou sur un regroupement des pixels par k-moyennes. Camargo et Smith ont ainsi proposé un algorithme qui convertit l'image dans plusieurs espaces de couleur, puis isole les régions symptomatiques par un seuillage de l'histogramme \cite{camargo2009image}. Les descripteurs décrivaient la couleur des taches, leur forme et surtout leur texture, souvent à l'aide des matrices de cooccurrence de niveaux de gris de Haralick \cite{haralick1973textural}. La canne à sucre n'a pas échappé à cette approche : Ratnasari et al. isolent les taches des feuilles par un seuillage de la composante a* de l'espace L*a*b*, puis les classent par SVM à partir de descripteurs de couleur et de texture, avec 80\,\% d'accuracy, et estiment en plus la sévérité de l'attaque \cite{ratnasari2014sugarcane}.
+
+Ces méthodes ont l'avantage d'être interprétables et peu coûteuses en calcul. Elles reposent en revanche sur des réglages manuels (seuils, nombre de groupes, choix de l'espace de couleur) qui supportent mal les variations d'éclairage, d'arrière-plan ou de stade de la maladie. Dès que l'on quitte les conditions de laboratoire, la segmentation devient le maillon faible de la chaîne \cite{barbedo2016review}.
+
+\subsubsection{Apprentissage automatique classique}
+
+L'étape suivante a consisté à confier la décision à des classifieurs appris sur ces mêmes descripteurs : machines à vecteurs de support (SVM), k plus proches voisins, réseaux de neurones peu profonds ou forêts aléatoires. Al-Hiary et al. combinent un regroupement par k-moyennes, des descripteurs de texture de cooccurrence des couleurs et un réseau de neurones, avec une précision comprise entre 83 et 94\,\% \cite{alhiary2011fast} ; Arivazhagan et al., avec une chaîne comparable appliquée à environ 500 feuilles de 30 espèces, passent de 86,77\,\% avec un classifieur à distance minimale à 94,74\,\% avec un SVM \cite{arivazhagan2013detection} ; Singh et Misra utilisent un algorithme génétique pour segmenter les lésions avant la classification \cite{singh2017detection}. D'autres travaux ont exploité des capteurs plus riches que la simple photographie : à partir de signatures hyperspectrales de feuilles de betterave sucrière, Rumpf et al. distinguent les feuilles saines des feuilles malades avec jusqu'à 97\,\% de réussite, et parviennent même à repérer les feuilles infectées avant l'apparition des symptômes visibles, avec une accuracy de 65 à 90\,\% \cite{rumpf2010early}. La revue de Liakos et al. donne une bonne idée de la variété de ces approches en agriculture \cite{liakos2018ml}.
+
+Leur limite commune tient à la conception manuelle des descripteurs. Un jeu de descripteurs efficace pour une culture, un capteur et des conditions d'éclairage donnés se transpose mal à d'autres contextes, et chaque nouvelle maladie demande un nouveau travail d'ingénierie \cite{barbedo2016review, mahlein2016plant}.
+
+\subsubsection{Apprentissage profond}
+
+Avec les réseaux convolutifs, l'extraction des caractéristiques et la classification sont apprises ensemble, directement à partir des pixels. Mohanty et al. ont été parmi les premiers à le montrer à grande échelle : en entraînant AlexNet et GoogLeNet sur 54\,306 images de la base PlantVillage \cite{hughes2015plantvillage} (14 cultures, 26 maladies, 38 classes), ils obtiennent 99,35\,\% d'accuracy avec GoogLeNet pré-entraîné sur ImageNet \cite{mohanty2016using}. Ferentinos atteint 99,53\,\% sur 17\,548 images de test, avec une base de 87\,848 images couvrant 25 espèces et 58 classes \cite{ferentinos2018deep}, et Too et al., qui comparent le fine-tuning de VGG16, Inception V4, ResNet et DenseNet sur PlantVillage, obtiennent 99,75\,\% avec DenseNet-121 \cite{too2019comparative}. Ces scores doivent toutefois être relativisés. Les images de PlantVillage montrent des feuilles détachées, photographiées sur un fond uniforme, et Mohanty et al. le reconnaissent eux-mêmes : testé sur deux petits jeux d'images trouvées en ligne, prises dans d'autres conditions, leur meilleur modèle tombe à environ 31\,\% d'accuracy \cite{mohanty2016using}.
+
+La quasi-totalité de ces travaux part de réseaux pré-entraînés sur ImageNet, si bien que l'apprentissage par transfert est devenu la pratique dominante en agriculture \cite{kamilaris2018dl}. Plusieurs auteurs sont allés plus loin en combinant plusieurs réseaux, soit en concaténant leurs caractéristiques profondes \cite{khan2018ccdf, ji2020unitedmodel, sutaji2022lemoxinet}, soit en agrégeant leurs décisions \cite{turkoglu2022plantdiseasenet}.
+
+\subsection{Travaux récents sur la canne à sucre}
+
+Le tableau~\ref{tab:sota} rassemble les travaux récents consacrés aux maladies de la canne à sucre. Nous avons vérifié chaque chiffre dans l'article d'origine ; les lignes en gras utilisent le même jeu de données que nous.
+
+\begin{table}[p]
+\centering
+\caption{Travaux récents sur la classification des maladies de la canne à sucre. Les accuracies sont celles annoncées par les auteurs, sur leur propre protocole. Les références en gras utilisent le même jeu de données que ce projet.}
+\label{tab:sota}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.1cm} c >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{1.75cm} >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Référence} & \textbf{Année} & \textbf{Jeu de données} & \textbf{Modèle} & \textbf{Résultat} & \textbf{Limites} \\
+\midrule
+Militante et al. \cite{militante2019sugarcane} & 2019 & 13\,842 images, saines ou malades (privé) & CNN & 95\,\% & Tâche binaire, protocole peu détaillé \\
+Srivastava et al. \cite{srivastava2020novel} & 2020 & Feuilles et tiges, saines ou malades (privé) & VGG-16 comme extracteur + SVM & AUC 90,2\,\% & Tâche binaire, seule l'AUC est donnée \\
+Malik et al. \cite{malik2021disease} & 2021 & Photos de terrain, 5 maladies, Karnataka (privé) & CNN ; YOLO et Faster R-CNN pour localiser & 93,4\,\% & Chute à 76,4\,\% sur des images trouvées en ligne \\
+Tamilvizhi et al. \cite{tamilvizhi2022quantum} & 2022 & 240 images, 2 classes (privé) & SqueezeNet + auto-encodeur réglé par QBPSO & 97,5\,\% & Très petit jeu binaire, découpage unique \\
+Kumpala et al. \cite{kumpala2022sugarcane} & 2022 & 4\,000 images, stries rouges ou saines (Thaïlande) & YOLO + application web & 95,9\,\% (essais) & Une seule maladie, évaluation par des utilisateurs \\
+Li et al. \cite{li2023slvit} & 2023 & 2\,095 photos, 7 classes, augmentées à 10\,309 (privé) & SLViT (CNN léger + ViT) & 87,6\,\% & Augmentation avant découpage (fuite possible) \\
+Sun et al. \cite{sun2023sevit} & 2023 & 1\,877 photos, 5 classes, Chine (privé) & SE-ResNet-18 + attention multi-tête & 89,6\,\% & Autres maladies, découpage unique \\
+Upadhye et al. \cite{upadhye2023sugarcane} & 2023 & 580 images, 4 maladies, Inde & CNN + application web & 98,7\,\% & Très petit jeu, découpage unique \\
+\textbf{Daphal et Koli} \cite{daphal2023enhancing} & 2023 & Même jeu (annoncé à 2\,569 images) & Ensemble de 2 CNN dont un avec attention spatiale & 86,5\,\% & Découpage unique, pas de validation croisée \\
+\textbf{Daphal et Koli} \cite{daphal2024enhanced} & 2024 & Même jeu & AMRCNN (CNN résiduel à attention), application Android & 86,5\,\% & Découpage unique ; 81,2\,\% après quantification \\
+\textbf{Talukder et al.} \cite{talukder2025sugarcanenet} & 2025 & Même jeu, découpage 70/30 & Ensemble pondéré de 7 CNN pré-entraînés & 99,6\,\% & Poids de l'ensemble choisis sans validation séparée \\
+\textbf{Mauya et al.} \cite{mauya2025improved} & 2025 & Même jeu (2\,521 images) & MADRN (résiduel dense à attention multi-échelle) & 94,8\,\% ; 90,6\,\% en 5 plis & Écart de 4 points entre découpage unique et 5 plis \\
+\textbf{Pal et al.} \cite{pal2025lightweight} & 2025 & Même jeu, test de 250 images & Mob-Res ; 13 backbones en extraction & 88,0\,\% (ConvNeXt-B : 90,6\,\%) & Jeu secondaire, petit test \\
+\textbf{Sundhar et al.} \cite{sundhar2025enhancing} & 2025 & Même jeu, découpage 80/20 & GCN-GAT sur superpixels & 91,0\,\% & Découpage unique \\
+\textbf{Ahmed et al.} \cite{ahmed2025agrihafnet} & 2025 & Même jeu, intégré à 18\,592 images de 6 cultures & AgriHAFNet : fusion EfficientNet-B0 + ConvNeXt-V2 & 95,7\,\% (toutes cultures) & Découpage aléatoire unique \\
+\textbf{Yin et al.} \cite{yin2026rema} & 2026 & Même jeu, découpage 60/20/20 & ReMA-MobileViT ; Grad-CAM & 99,0\,\% (5 plis) & Pas de test externe \\
+\textbf{Wadhawan et al.} \cite{wadhawan2026multiscale} & 2026 & Même jeu (annoncé à 2\,569 images) & Fusion EfficientNet-V2 + Transformer & 98,3\,\% & Pas de contrôle des doublons signalé \\
+\textbf{Indra et al.} \cite{indra2026sugarcane} & 2026 & Même jeu (6 plis) + 427 photos de terrain (Indonésie) & ConvNeXt V2-Tiny & 98,4\,\% sur les photos de terrain & Doublons non traités ; test externe de 427 images \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Plusieurs constats ressortent de ce tableau. D'abord, une bonne partie des travaux utilise des jeux privés, souvent petits, avec des classes qui varient d'une étude à l'autre ; leurs chiffres ne sont donc pas comparables entre eux. Ensuite, sur le jeu de Daphal et Koli, les résultats annoncés s'étalent de 86,5\,\% à 99,6\,\%, un écart considérable pour un même problème. Une partie de cet écart tient aux architectures, mais une autre tient visiblement au protocole : la plupart des études s'appuient sur un découpage unique, et Mauya et al. observent eux-mêmes une différence de 4 points entre leur découpage unique (94,8\,\%) et leur validation croisée (90,6\,\%) \cite{mauya2025improved}. Aucune de ces études ne signale les doublons que contient le jeu de données (voir section~\ref{sec:dataset}) ; le seul travail que nous ayons trouvé qui les traite est celui d'Arman et al., qui fusionnent ce jeu avec deux autres et suppriment les doublons exacts et approchés de l'ensemble obtenu \cite{arman2025sugarcaneshufflenet}. La fusion de plusieurs réseaux a déjà été tentée, sous forme d'ensembles \cite{daphal2023enhancing, talukder2025sugarcanenet} ou d'architectures à deux branches \cite{ahmed2025agrihafnet, wadhawan2026multiscale}, mais toujours pour une combinaison fixée d'avance. Enfin, les comparaisons entre stratégies de transfert restent rares : Daphal et Koli comparent plusieurs réseaux pré-entraînés \cite{daphal2023enhancing}, Pal et al. évaluent treize réseaux en extraction de caractéristiques \cite{pal2025lightweight}, mais aucune étude ne met en regard, sur ce jeu, l'extraction de caractéristiques, le fine-tuning partiel et le fine-tuning complet pour les mêmes architectures.
+
+\subsection{Positionnement du projet}
+
+Notre travail se distingue des études précédentes sur quatre points.
+
+\paragraph{Un protocole d'évaluation contrôlé.} Nous avons audité le jeu de données avant de l'utiliser et supprimé 210 doublons exacts et 24 quasi-doublons, puis isolé un ensemble de test qui n'intervient dans aucun choix, et utilisé une validation croisée stratifiée à cinq plis pour tout le reste. Nos chiffres sont donc probablement un peu plus bas que ceux qu'on obtiendrait avec un simple découpage aléatoire du jeu brut, mais ils mesurent mieux la capacité réelle des modèles à reconnaître des images nouvelles.
+
+\paragraph{Une comparaison systématique des stratégies de transfert.} Chaque architecture est évaluée en extraction de caractéristiques, en fine-tuning partiel et en fine-tuning complet, dans des conditions strictement identiques, et confrontée à un CNN entraîné from scratch. ConvNeXtV2 a déjà été appliqué à ces images \cite{indra2026sugarcane, ahmed2025agrihafnet}, mais pas MobileNetV4, à notre connaissance, alors que c'est l'architecture la plus adaptée à un usage sur téléphone.
+
+\paragraph{Une étude exhaustive de la fusion.} Plutôt que de fusionner une combinaison choisie a priori, nous évaluons les 15 combinaisons possibles des quatre réseaux, à partir des réseaux gelés comme des réseaux fine-tunés, ce qui permet de voir quels réseaux se complètent réellement.
+
+\paragraph{Au-delà de l'accuracy.} Nous analysons aussi les performances par maladie, la robustesse face à des dégradations réalistes de l'image (bruit, flou, sous-exposition, compression, occultation), le coût de calcul en vue d'un déploiement et les zones de l'image utilisées par les modèles (Grad-CAM). Le code est entièrement disponible, ce qui permet de reproduire chaque résultat.
