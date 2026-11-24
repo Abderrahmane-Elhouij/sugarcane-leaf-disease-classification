@@ -1,0 +1,290 @@
+{
+  "raw_images": 2521,
+  "raw_counts": {
+    "Healthy": 522,
+    "Mosaic": 462,
+    "RedRot": 518,
+    "Rust": 514,
+    "Yellow": 505
+  },
+  "corrupted_images": 0,
+  "exact_duplicates_removed": 210,
+  "exact_duplicate_groups": 184,
+  "after_exact_dedup": {
+    "Healthy": 476,
+    "Mosaic": 376,
+    "RedRot": 518,
+    "Rust": 447,
+    "Yellow": 494
+  },
+  "near_duplicate_threshold": 0.9,
+  "near_duplicates_removed": 24,
+  "near_duplicates_cross_class": 0,
+  "near_duplicate_pairs": [
+    {
+      "kept": "healthy (402).jpeg",
+      "removed": "healthy (503).jpeg",
+      "kept_class": "Healthy",
+      "removed_class": "Healthy",
+      "similarity": 0.9913
+    },
+    {
+      "kept": "healthy (402).jpeg",
+      "removed": "healthy (504).jpeg",
+      "kept_class": "Healthy",
+      "removed_class": "Healthy",
+      "similarity": 0.9757
+    },
+    {
+      "kept": "healthy (402).jpeg",
+      "removed": "healthy (505).jpeg",
+      "kept_class": "Healthy",
+      "removed_class": "Healthy",
+      "similarity": 0.9985
+    },
+    {
+      "kept": "healthy (402).jpeg",
+      "removed": "healthy (507).jpeg",
+      "kept_class": "Healthy",
+      "removed_class": "Healthy",
+      "similarity": 0.9909
+    },
+    {
+      "kept": "redrot (112).jpeg",
+      "removed": "redrot (78).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9981
+    },
+    {
+      "kept": "redrot (123).jpeg",
+      "removed": "redrot (127).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9812
+    },
+    {
+      "kept": "redrot (144).jpeg",
+      "removed": "redrot (204).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9931
+    },
+    {
+      "kept": "redrot (149).jpeg",
+      "removed": "redrot (203).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9971
+    },
+    {
+      "kept": "redrot (150).jpeg",
+      "removed": "redrot (202).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9929
+    },
+    {
+      "kept": "redrot (152).jpeg",
+      "removed": "redrot (201).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9985
+    },
+    {
+      "kept": "redrot (157).jpeg",
+      "removed": "redrot (200).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.977
+    },
+    {
+      "kept": "redrot (163).jpeg",
+      "removed": "redrot (197).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9707
+    },
+    {
+      "kept": "redrot (164).jpeg",
+      "removed": "redrot (199).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9998
+    },
+    {
+      "kept": "redrot (166).jpeg",
+      "removed": "redrot (198).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9668
+    },
+    {
+      "kept": "redrot (171).jpeg",
+      "removed": "redrot (194).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9988
+    },
+    {
+      "kept": "redrot (173).jpeg",
+      "removed": "redrot (192).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9901
+    },
+    {
+      "kept": "redrot (191).jpeg",
+      "removed": "redrot (196).jpeg",
+      "kept_class": "RedRot",
+      "removed_class": "RedRot",
+      "similarity": 0.9974
+    },
+    {
+      "kept": "rust (108).jpeg",
+      "removed": "rust (120).jpeg",
+      "kept_class": "Rust",
+      "removed_class": "Rust",
+      "similarity": 0.9112
+    },
+    {
+      "kept": "rust (2).jpeg",
+      "removed": "rust (65).jpeg",
+      "kept_class": "Rust",
+      "removed_class": "Rust",
+      "similarity": 0.9983
+    },
+    {
+      "kept": "rust (453).jpeg",
+      "removed": "rust (454).jpeg",
+      "kept_class": "Rust",
+      "removed_class": "Rust",
+      "similarity": 0.9512
+    },
+    {
+      "kept": "rust (5).jpeg",
+      "removed": "rust (58).jpeg",
+      "kept_class": "Rust",
+      "removed_class": "Rust",
+      "similarity": 0.9988
+    },
+    {
+      "kept": "rust (62).jpeg",
+      "removed": "rust (7).jpeg",
+      "kept_class": "Rust",
+      "removed_class": "Rust",
+      "similarity": 0.9947
+    },
+    {
+      "kept": "rust (63).jpeg",
+      "removed": "rust (8).jpeg",
+      "kept_class": "Rust",
+      "removed_class": "Rust",
+      "similarity": 0.9992
+    },
+    {
+      "kept": "yellow (377).jpeg",
+      "removed": "yellow (378).jpeg",
+      "kept_class": "Yellow",
+      "removed_class": "Yellow",
+      "similarity": 0.9067
+    }
+  ],
+  "final_images": 2287,
+  "final_counts": {
+    "Healthy": 472,
+    "Mosaic": 376,
+    "RedRot": 505,
+    "Rust": 441,
+    "Yellow": 493
+  },
+  "splits": {
+    "test": {
+      "Healthy": 71,
+      "Mosaic": 57,
+      "RedRot": 76,
+      "Rust": 66,
+      "Yellow": 74
+    },
+    "fold_0_train": {
+      "Healthy": 321,
+      "Mosaic": 255,
+      "RedRot": 343,
+      "Rust": 300,
+      "Yellow": 335
+    },
+    "fold_0_val": {
+      "Healthy": 80,
+      "Mosaic": 64,
+      "RedRot": 86,
+      "Rust": 75,
+      "Yellow": 84
+    },
+    "fold_1_train": {
+      "Healthy": 321,
+      "Mosaic": 255,
+      "RedRot": 343,
+      "Rust": 300,
+      "Yellow": 335
+    },
+    "fold_1_val": {
+      "Healthy": 80,
+      "Mosaic": 64,
+      "RedRot": 86,
+      "Rust": 75,
+      "Yellow": 84
+    },
+    "fold_2_train": {
+      "Healthy": 320,
+      "Mosaic": 255,
+      "RedRot": 344,
+      "Rust": 300,
+      "Yellow": 335
+    },
+    "fold_2_val": {
+      "Healthy": 81,
+      "Mosaic": 64,
+      "RedRot": 85,
+      "Rust": 75,
+      "Yellow": 84
+    },
+    "fold_3_train": {
+      "Healthy": 321,
+      "Mosaic": 255,
+      "RedRot": 343,
+      "Rust": 300,
+      "Yellow": 336
+    },
+    "fold_3_val": {
+      "Healthy": 80,
+      "Mosaic": 64,
+      "RedRot": 86,
+      "Rust": 75,
+      "Yellow": 83
+    },
+    "fold_4_train": {
+      "Healthy": 321,
+      "Mosaic": 256,
+      "RedRot": 343,
+      "Rust": 300,
+      "Yellow": 335
+    },
+    "fold_4_val": {
+      "Healthy": 80,
+      "Mosaic": 63,
+      "RedRot": 86,
+      "Rust": 75,
+      "Yellow": 84
+    }
+  },
+  "dev_mean": [
+    0.4994,
+    0.5297,
+    0.3824
+  ],
+  "dev_std": [
+    0.1928,
+    0.1929,
+    0.1989
+  ]
+}
