@@ -1,4 +1,5 @@
 import argparse
+import textwrap
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -69,7 +70,7 @@ def cam_grid(columns, images, labels, picks, device, name, row_titles=None):
             ax.set_xlabel(f"{CLASSES[predicted]} ({100 * probs[row].max():.0f} %)", fontsize=6.5,
                           color=INK_SECONDARY if predicted == labels[index] else "#e34948", labelpad=2)
             if row == 0:
-                ax.set_title(title, fontsize=7.5)
+                ax.set_title(textwrap.fill(title, 18), fontsize=7.5)
         model.cpu()
         torch.cuda.empty_cache()
     fig.subplots_adjust(left=0.06, right=0.99, top=0.95, bottom=0.1, wspace=0.05, hspace=0.32)
